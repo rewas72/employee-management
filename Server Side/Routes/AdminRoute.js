@@ -216,6 +216,7 @@ router.post('/add_task', (req, res) => {
     });
 });
 
+
 router.get('/task/:projectId', (req, res) => {
     const projectId = req.params.projectId;
     const sql = `SELECT t.taskId, t.taskName, t.startDate, t.endDate, 
@@ -232,7 +233,7 @@ router.get('/task/:projectId', (req, res) => {
   
 
   router.get('/task/:employeeId', (req, res) => {
-    const employeeId = req.params.employeeIdId;
+    const employeeId = req.params.employeeId;
     const sql = `SELECT t.taskId, t.taskName, t.startDate, t.endDate, 
                         t.status, e.fullname as assignedEmployee 
                  FROM task t 
@@ -265,20 +266,26 @@ router.get('/task/:taskId', (req, res) => {
 router.put('/edit_task/:taskId', (req, res) => {
     const taskId = req.params.taskId;
     const sql = `UPDATE task 
-        set taskId = ?, taskName = ?, projectId = ?, projectName = ?, startDate = ?, endDate = ?, status = ?
-        Where taskId = ?`
+        set taskId = ?, taskName = ?, startDate = ?, endDate = ?, status = ?
+        Where taskId = ?`;
+
     const values = [
-        req.body.taskId,
-        req.body,taskName,
-        req.body.startDate,
-        req.body.endDate,
-        req.body.status
-    ]
-    con.query(sql,[...values, taskId], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
+        req.body.taskId,      // taskId
+        req.body.taskName,    // taskName (düzeltildi)
+        req.body.startDate,   // startDate
+        req.body.endDate,     // endDate
+        req.body.status       // status
+    ];
+
+    con.query(sql, [...values, taskId], (err, result) => {
+        if (err) {
+            console.error("Query Error:", err);
+            return res.status(500).json({ Status: false, Error: "Query Error: " + err });
+        }
+        return res.json({ Status: true, Result: result });
+    });
+});
+
 
 router.delete('/delete_task/:taskId', (req, res) => {
     const taskId = req.params.taskId;

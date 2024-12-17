@@ -9,6 +9,8 @@ const Project = () => {
   const [modalVisible, setModalVisible] = useState("");
   const [selectedProjectName, setSelectedProjectName] = useState("");
   const [employee, setEmployee] = useState([])
+  const statuses = ["Tamamlanacak", "Devam Ediyor", "Bitti"];
+
 
   useEffect(() => {
     axios
@@ -47,6 +49,17 @@ const Project = () => {
       })
   }
 
+  const handleDeleteTask = (taskId)=> {
+    axios.delete('http://localhost:3000/auth/delete_task/'+taskId).then(result=> {
+      if(result.data.Status) {
+        window.location.reload()
+      } else {
+        alert(result.data.Error)
+      }
+    })
+  }
+
+  
 
   const handleViewTasks = (projectId, projectName) => {
     axios
@@ -125,8 +138,6 @@ const Project = () => {
           </tbody>
         </table>
       </div>
-
-
       {modalVisible && (
         <div className="modal d-block modal-xl " style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="modal-dialog ">
@@ -150,7 +161,9 @@ const Project = () => {
                         <th>TaskName</th>
                         <th>StartDate</th>
                         <th>EndDate</th>
+
                         <th>Status</th>
+                        <th>employeeId</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -160,7 +173,16 @@ const Project = () => {
                           <td>{task.taskName}</td>
                           <td>{task.startDate}</td>
                           <td>{task.endDate}</td>
-                          <td>{task.status}</td>
+                          <td>{statuses[task.status]}</td>
+                          <td>{task.assignedEmployee ? task.assignedEmployee : "No Employee"}</td> {/* assignedEmployee */}
+                          <td>
+                          <Link to={`/dashboard/edit_task/` + task.taskId} className="btn btn-primary btn-sm m-1 ">
+                              Edit
+                          </Link>
+                          <Link onClick={()=> handleDeleteTask(task.taskId)} className="btn btn-warning btn-sm m-1 ">
+                              Delete
+                          </Link>
+                          </td>
                         </tr>
                       ))}
                     </tbody>

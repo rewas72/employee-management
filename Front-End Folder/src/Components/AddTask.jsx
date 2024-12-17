@@ -18,9 +18,10 @@ const AddTask = () => {
 
 
     const handleChange = (e) => {
-        setStatus(e.target.value); // Seçim değiştiğinde state güncellenir
+        const selectedStatus = e.target.value;
+        const statusIndex = statuses.indexOf(selectedStatus);
+        setTask({ ...task, status: statusIndex }); // INT değerini state'e ata
     };
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -177,10 +178,7 @@ const AddTask = () => {
                         />
                     </div>
                     <div className="col-12">
-                        <label for="inputEmail4" className="form-label">
-                            durum seç
-                        </label>
-                        <select value={status} onChange={handleChange}>
+                        <select value={statuses[task.status] || ""} onChange={handleChange}>
                             <option value="" disabled>
                                 Durum Seçin
                             </option>
